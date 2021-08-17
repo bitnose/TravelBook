@@ -12,7 +12,7 @@ import CoreLocation
 
 class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
 
-    @IBOutlet weak var saveButton: UIButton!
+    
     @IBOutlet weak var nameText: UITextField!
     @IBOutlet weak var commentText: UITextField!
     @IBOutlet weak var mapView: MKMapView!
@@ -20,6 +20,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var locationManager = CLLocationManager()
     var chosenLatitude = Double()
     var chosenLongitude = Double()
+    
+    var selectedTitle = ""
+    var selectedTitleID : UUID?
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +45,70 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         gestureRecognizer.minimumPressDuration = 3
         mapView.addGestureRecognizer(gestureRecognizer)
         
-        
+        if selectedTitle != nil {
+            
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Places")
+            let stringUUID = selectedTitleID!.uuidString
+            
+            fetchRequest.predicate = NSPredicate(format: "id = %@", stringUUID)
+            fetchRequest.returnsObjectsAsFaults = false
+            
+            
+            do {
+                
+                let results = try context.fetch(fetchRequest)
+                
+                if results.count > 0 {
+                    
+                    // LOOP through
+                    for result in results as! [NSManagedObject] {
+                        
+                        if let title = result.value(forKey: "title") as? String {
+                            
+                        }
+                        
+                        if let subtitle = result.value(forKey: "subtitle") as? String {
+                            
+                        }
+                        
+                        if let latitude = result.value(forKey: "latitude") as? Double {
+                            
+                        }
+                        
+                        if let longitude = result.value(forKey: "longitude") as? Double {
+                            
+                        }
+                        
+                        
+                        
+                        
+                        
+                    }
+                    
+                    
+                    
+                    
+                }
+                
+                
+                
+                
+            } catch let error {
+                print("Error while fetching data \(error)")
+            }
+            
+            
+            
+
+            
+            
+            
+        } else {
+            // add new data 
+        }
         
         
         
@@ -97,8 +166,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
     }
     
-    @IBAction func saveButtonPressed(_ sender: Any) {
-        
+    @IBAction func saveButtonClicked(_ sender: Any) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         
@@ -121,6 +189,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         
     }
+
     
     
     
