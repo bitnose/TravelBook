@@ -120,7 +120,58 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    
+    // MARK: - Delete Data From Core Data and the List
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            
+            // Coredata
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            
+            // Make a fetch request to the coredata to find the selected location in coredata
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Places")
+            let idString = idArray[indexPath.row].uuidString
+            
+            // Make a predicate to filter the results ie to find a matching object (use id)
+            fetchRequest.predicate = NSPredicate(format: "id = %@", idString)
+            // Make it false because we need to access the values
+            fetchRequest.returnsObjectsAsFaults = false
+            
+            // Remove the item
+            do {
+                // Fetcht the right item
+                let results = try context.fetch(fetchRequest)
+                if results.count > 0 {
+                    // Unwrap
+                    for result in results as! [NSManagedObject] {
+                        
+                        if let id = result.value(forKey: "id") as? UUID {
+                            
+                            // Check that the ids are matching and remove the item from the arrays and reload the tableview
+                            if id == idArray[indexPath.row] {
+                                context.delete(result)
+                                titleArray.remove(at: indexPath.row)
+                                idArray.remove(at: indexPath.row)
+                                self.tableView.reloadData()
+                                
+                                do {
+                                    try context.save()
+                                } catch let error {
+                                    print("error while saving data \(error)")
+                                }
+                                // Break the loop because it should not continue after the deleting the item from the lists
+                                break
+                            }
+                        }
+                    }
+                }
+            } catch let error {
+                print("Error, \(error.localizedDescription)")
+            }
+        }
+    }
+
     // MARK: - To send data betweeen the views
     // If the row is selected show the selected place on the map
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
