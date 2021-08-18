@@ -119,15 +119,18 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
+    
+    
+    // MARK: - To send data betweeen the views
     // If the row is selected show the selected place on the map
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         chosenTitle = titleArray[indexPath.row]
         chosenTitleID = idArray[indexPath.row]
         performSegue(withIdentifier: "toViewController", sender: nil)
     }
-    
-    // MARK: - To send data betweeen the views 
+
     // If something is selected send some information to the view
+    // Passing data with segues
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toViewController" {
             let destinationVC = segue.destination as! ViewController

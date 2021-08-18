@@ -34,9 +34,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     // MARK: - FUNCS
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        
         
         // MARK: Location setup
         mapView.delegate = self
@@ -44,6 +45,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+        let hideGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        view.addGestureRecognizer(hideGestureRecognizer)
+        
         
         // Add gesture recognizer to detect when new annotation should be created
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(chooseLocation(gestureRecognizer:)))
@@ -254,4 +259,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         NotificationCenter.default.post(name: Notification.Name("newPlace"), object: nil)
         navigationController?.popViewController(animated: true)
     }
+    
+    // MARK: - Hide keyboard
+    
+    @objc func hideKeyboard() {
+        view.endEditing(true)
+    }
+    
+    
+    
 }
